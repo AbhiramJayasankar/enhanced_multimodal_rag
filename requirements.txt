@@ -1,0 +1,12 @@
+# Core ML/AI packages
+torch>=2.0.0
+transformers>=4.30.0
+faiss-cpu>=1.7.4  # Use faiss-gpu if you have CUDA
+numpy>=1.24.0
+
+# Google AI
+google-generativeai>=0.3.0
+
+# Utilities
+python-dotenv>=1.0.0
+Pillow>=10.0.0
