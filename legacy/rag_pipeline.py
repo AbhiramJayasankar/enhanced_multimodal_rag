@@ -16,7 +16,7 @@ print("Loading search model and indexes...")
 search_model, query_index, image_index, query_metadata, image_metadata = load_model_and_indexes()
 print("Search model and indexes loaded\n")
 
-gemini_model = genai.GenerativeModel('gemini-2.5-pro')
+gemini_model = genai.GenerativeModel('gemini-3.1-flash-lite')
 print("Initialized Gemini model\n")
 
 query = "What is ColPali's average nDCG@5 score across all ViDoRe tasks?"
@@ -26,6 +26,9 @@ print("Enhancing query...")
 enhanced = enhance_query(query)
 enhanced_queries = enhanced['queries']
 print(f"Enhanced into {len(enhanced_queries)} queries\n")
+print(f"Enhanced queries\n")
+print(enhanced_queries)
+
 
 print("Retrieving relevant context using search...")
 search_results_json = search(enhanced_queries, search_model, query_index, image_index, query_metadata, image_metadata)
@@ -52,6 +55,16 @@ for result in search_results_list:
             all_images.append(img_result)
 
 print(f"Aggregated {len(all_texts)} unique texts and {len(all_images)} unique images\n")
+
+print("Retrieved texts:")
+for i, text_result in enumerate(all_texts, 1):
+    print(f"Text {i}: {text_result['text']}")
+print()
+
+print("Retrieved image files:")
+for i, img_result in enumerate(all_images, 1):
+    print(f"Image {i}: {os.path.basename(img_result['path'])}")
+print()
 
 context_text = "Retrieved context:\n\n"
 for i, text_result in enumerate(all_texts, 1):

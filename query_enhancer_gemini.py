@@ -1,11 +1,11 @@
-"""Simple query enhancement powered by Google AI Studio (Gemini)."""
+"""Query enhancement powered by Google GenAI SDK and gemini-3.1-flash-lite."""
 from __future__ import annotations
 
 import json
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
-
+from google import genai
+from google.genai import types
 
 def enhance_query(query: str) -> dict:
     """
@@ -16,20 +16,16 @@ def enhance_query(query: str) -> dict:
 
     Returns:
         dict: JSON object with enhanced queries
-
-    Raises:
-        ValueError: If query is empty or API key is missing
-        RuntimeError: If model response is invalid
     """
     if not query or not query.strip():
         raise ValueError("Query cannot be empty")
 
     load_dotenv()
-    api_key = os.getenv("GEMINI_API_KEY", "").strip()
+    api_key = os.getenv("GEMINI_API_KEY", "").strip() or os.getenv("GOOGLE_API_KEY", "").strip()
     if not api_key:
-        raise ValueError("GEMINI_API_KEY not found in environment")
+        raise ValueError("GEMINI_API_KEY or GOOGLE_API_KEY not found in environment")
 
-    genai.configure(api_key=api_key)
+    client = genai.Client(api_key=api_key)
 
     system_prompt = """You are a specialized assistant whose job is to take a raw user query and transform it into multiple enhanced queries optimized for retrieval.
 
@@ -40,13 +36,15 @@ Balance granularity—produce queries that range from highly precise (with key t
 Maintain neutrality—do not answer the query, only rewrite/enhance it.
 Return a JSON object with a queries array that lists the rewritten sub-queries."""
 
-    model = genai.GenerativeModel(
-        model_name="models/gemini-2.5-flash",
-        system_instruction=system_prompt,
-        generation_config={"response_mime_type": "application/json"},
+    response = client.models.generate_content(
+        model="gemini-3.1-flash-lite",
+        contents=query,
+        config=types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            response_mime_type="application/json",
+        )
     )
-
-    response = model.generate_content(query)
+    
     text = (response.text or "").strip()
 
     if not text:
@@ -56,7 +54,6 @@ Return a JSON object with a queries array that lists the rewritten sub-queries."
         return json.loads(text)
     except json.JSONDecodeError as e:
         raise RuntimeError(f"Failed to parse model response as JSON: {e}")
-
 
 if __name__ == "__main__":
     query = "What is ColPali's average nDCG@5 score across all ViDoRe tasks?"

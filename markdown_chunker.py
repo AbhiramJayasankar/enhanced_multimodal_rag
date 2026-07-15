@@ -39,7 +39,7 @@ def chunk_markdown_by_headings(file_path):
     return chunks
 
 # Read and chunk the markdown file
-input_file = r'c:\Users\abhir\Desktop\projects\jina\colpali.md'
+input_file = r'c:\Users\abhir\Desktop\projects\jina\markdown\colpali.md'
 chunks = chunk_markdown_by_headings(input_file)
 
 # Save to JSON

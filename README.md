@@ -156,7 +156,7 @@ k = 5  # Number of top results to retrieve
 
 Change models in respective files:
 - **Jina Embeddings**: `jinaai/jina-embeddings-v4` (in `build_embeddings.py` and `retrieval.py`)
-- **Gemini Model**: `gemini-2.5-pro` or `gemini-2.5-flash` (in `rag_pipeline.py` and `query_enhancer.py`)
+- **Gemini Model**: `gemini-3.1-flash-lite` (in `rag_pipeline.py` and `query_enhancer.py`)
 
 ## Requirements
 
